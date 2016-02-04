@@ -7,7 +7,7 @@ public class Person {
     private String name;
     private String verb;
     private LocalDate birthDay;
-    Boolean isDead;
+    boolean isDead;
 
     public Person(String n, LocalDate bDay, boolean dead) {
         name = n;
