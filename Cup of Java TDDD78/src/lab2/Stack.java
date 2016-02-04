@@ -25,7 +25,7 @@ public class Stack
 	elements.remove(0);
 	return first;
     }
-    
+
     public static void main(String[] args) {
     	Stack stack = new Stack();
     	Person dali = new Person("Salvador Dali", LocalDate.of(1904, 5, 11), true);
