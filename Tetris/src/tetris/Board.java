@@ -1,11 +1,12 @@
 package tetris;
 
-import java.sql.Array;
-
-public class Board {
-    private SquareType[][] squares;
+class Board {
+    private final SquareType[][] squares;
     private int width;
     private int height;
+
+    private final Poly falling = null;
+    private int fallingX, fallingY;
 
     public Board(int width, int height) {
         this.width = width;
@@ -51,6 +52,18 @@ public class Board {
             }
         }
 
+    }
+
+    public int getFallingY() {
+        return fallingY;
+    }
+
+    public int getFallingX() {
+        return fallingX;
+    }
+
+    public Poly getFalling() {
+        return falling;
     }
 
     public static void main(String[] args) {

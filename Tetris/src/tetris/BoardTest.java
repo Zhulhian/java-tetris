@@ -1,13 +1,28 @@
 package tetris;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
-public class BoardTest {
+class BoardTest {
+    private static Board gameBoard;
+    private static TetrisFrame gameFrame;
+    private static final int WIDTH = 20;
+    private static final int HEIGHT = 35;
+
     public static void main(String[] args) {
-        Board gameBoard = new Board(20, 50);
+        gameBoard = new Board(WIDTH, HEIGHT);
+        gameFrame = new TetrisFrame(gameBoard);
 
-        for (int i = 0; i < 10; i++) {
-            gameBoard.randomizeBoard();
-        }
+        final Action doOneStep = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                gameBoard.randomizeBoard();
+                gameFrame.setTextArea(BoardToTextConverter.convertToText(gameBoard));
+            }
+        };
 
-        System.out.println(BoardToTextConverter.convertToText(gameBoard));
+        final Timer clockTimer = new Timer(100, doOneStep);
+        clockTimer.setCoalesce(true);
+        clockTimer.start();
+
+        //clockTimer.stop();
     }
 }
