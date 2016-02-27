@@ -8,27 +8,22 @@ import java.awt.event.ActionListener;
 
 class TetrisFrame extends JFrame {
     private final Board gameBoard;
-    private final JTextArea textArea;
+    private final TetrisComponent tetrisComponent;
 
     public TetrisFrame(Board gameBoard) throws HeadlessException {
-        super("Tetris Game");
+        super(" / T E T R I S / ");
 
         this.gameBoard = gameBoard;
-        textArea = new JTextArea(gameBoard.getHeight(), gameBoard.getWidth());
         this.setLayout(new BorderLayout());
-
         createMenus();
 
-        textArea.setText(BoardToTextConverter.convertToText(gameBoard));
-        this.add(textArea, BorderLayout.CENTER);
-        textArea.setFont(new Font("Monospaced", Font.PLAIN, 20));
+        tetrisComponent = new TetrisComponent(gameBoard);
+        gameBoard.addBoardListener(tetrisComponent);
+        this.add(tetrisComponent);
 
         this.pack();
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setVisible(true);
-    }
-
-    public void setTextArea(String s) {
-        this.textArea.setText(s);
     }
 
     private void createMenus() {

@@ -9,4 +9,12 @@ public class Poly {
     public SquareType getSquareType(int x, int y) {
         return polymino[x][y];
     }
+
+    public int getWidth() {
+        return polymino[0].length;
+    }
+
+    public int getHeight() {
+        return polymino.length;
+    }
 }

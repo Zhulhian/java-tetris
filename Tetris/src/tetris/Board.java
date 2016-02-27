@@ -1,17 +1,28 @@
 package tetris;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 class Board {
     private final SquareType[][] squares;
     private int width;
     private int height;
 
-    private final Poly falling = null;
+    private ArrayList<BoardListener> boardListenerList;
+    private TetrominoMaker tetromaker;
+
+    private Random rng = new Random();
+
+    private Poly falling = null;
     private int fallingX, fallingY;
 
     public Board(int width, int height) {
         this.width = width;
         this.height = height;
+
         squares = new SquareType[height][width];
+        boardListenerList = new ArrayList<BoardListener>();
+        tetromaker = new TetrominoMaker();
 
         // Change to width/height maybe?
         for (int i = 0; i < squares.length; i++) {
@@ -29,16 +40,41 @@ class Board {
         return height;
     }
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
     public SquareType getSquareType(int x, int y) {
         return squares[y][x];
+    }
+
+    public void addBoardListener(BoardListener bl) {
+        boardListenerList.add(bl);
+    }
+
+    public void removeBoardListener(BoardListener bl) {
+        boardListenerList.remove(bl);
+    }
+
+    public void tick() {
+        if (falling == null) {
+            fallingX = (int)(width / 2);
+            fallingY = 0;
+            falling = tetromaker.getPoly(rng.nextInt(tetromaker.getNumberOfTypes()));
+        } else {
+            fallingY += 1;
+        }
+        notifyListeners();
+    }
+
+    public void moveFallingRight() {
+        fallingX++;
+        notifyListeners();
+    }
+
+    public void moveFallingLeft() {
+        fallingX--;
+        notifyListeners();
+    }
+
+    private void notifyListeners() {
+        boardListenerList.forEach(BoardListener::boardChanged);
     }
 
     public void randomizeBoard() {
@@ -52,6 +88,7 @@ class Board {
             }
         }
 
+        notifyListeners();
     }
 
     public int getFallingY() {
@@ -64,12 +101,5 @@ class Board {
 
     public Poly getFalling() {
         return falling;
-    }
-
-    public static void main(String[] args) {
-        Board gameBoard = new Board(20, 50);
-
-        System.out.println("Height: " + gameBoard.height);
-        System.out.println("Width: " + gameBoard.width);
     }
 }
