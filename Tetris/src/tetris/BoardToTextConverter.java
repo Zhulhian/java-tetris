@@ -4,7 +4,7 @@ public class BoardToTextConverter {
 
     enum SquareChar {
         EMPTY('\u22C5'), I('\u2503'), O('\u25FC'), T('\u2533'),
-        S('\u2440'), Z('\u31C5'), J('\u251B'), L('\u2517');
+        S('\u2440'), Z('\u31C5'), J('\u251B'), L('\u2517'), OUTSIDE('X');
 
         public final char squareChar;
 
@@ -16,6 +16,8 @@ public class BoardToTextConverter {
             switch (square) {
                 case EMPTY:
                     return EMPTY.squareChar;
+                case OUTSIDE:
+                    return OUTSIDE.squareChar;
                 case I:
                     return I.squareChar;
                 case O:
@@ -52,40 +54,6 @@ public class BoardToTextConverter {
                 } else {
                     buf.append(SquareChar.getCharFromSquare(currSquare));
                 }
-                /*switch (gameBoard.getSquareType(j, i)) {
-                    case EMPTY:
-                        if (gameBoard.getFalling() != null &&
-                                gameBoard.getFallingX() == j &&
-                                gameBoard.getFallingY() == i) {
-                            buf.append(gameBoard.getFalling().getSquareType(j, i));
-                        }
-
-
-                        buf.append(SquareChar.EMPTY.squareChar);
-
-                        break;
-                    case I:
-                        buf.append(SquareChar.I.squareChar);
-                        break;
-                    case O:
-                        buf.append(SquareChar.O.squareChar);
-                        break;
-                    case T:
-                        buf.append(SquareChar.T.squareChar);
-                        break;
-                    case S:
-                        buf.append(SquareChar.S.squareChar);
-                        break;
-                    case Z:
-                        buf.append(SquareChar.Z.squareChar);
-                        break;
-                    case J:
-                        buf.append(SquareChar.J.squareChar);
-                        break;
-                    case L:
-                        buf.append(SquareChar.L.squareChar);
-                        break;
-                }*/
             }
             buf.append('\n');
         }

@@ -1,11 +1,18 @@
 package tetris;
-import javax.swing.*;
+import javax.swing.Timer;
+import javax.swing.Action;
+import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 
 class BoardTest {
 
-    private static final int WIDTH = 20;
-    private static final int HEIGHT = 35;
+    private static final int WIDTH = 12;
+    private static final int HEIGHT = 20;
+
+    private static Timer clockTimer;
+
+    private BoardTest() {}
 
     public static void main(String[] args) {
 
@@ -18,7 +25,7 @@ class BoardTest {
             }
         };
 
-        final Timer clockTimer = new Timer(500, doOneStep);
+        clockTimer = new Timer(200, doOneStep);
         clockTimer.setCoalesce(true);
         clockTimer.start();
 
