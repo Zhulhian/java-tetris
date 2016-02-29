@@ -1,7 +1,7 @@
 package tetris;
 
 class TetrominoMaker {
-    public int getNumberOfTypes() {
+    public static int getNumberOfTypes() {
         return SquareType.values().length - 2 ;
     }
 
