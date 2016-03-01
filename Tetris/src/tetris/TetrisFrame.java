@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 class TetrisFrame extends JFrame {
     private final Board gameBoard;
     private final TetrisComponent tetrisComponent;
-    private HighscoreComponent highscoreComponent;
 
     public TetrisFrame(Board gameBoard) throws HeadlessException {
         super(" / T E T R I S / ");
@@ -43,7 +42,7 @@ class TetrisFrame extends JFrame {
 
 
     public void showHighscore(HighscoreList hs) {
-        highscoreComponent = new HighscoreComponent(hs);
+        HighscoreComponent highscoreComponent = new HighscoreComponent(hs);
         this.remove(tetrisComponent);
         this.add(highscoreComponent);
         this.pack();

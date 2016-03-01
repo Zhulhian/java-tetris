@@ -2,7 +2,6 @@ package tetris;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -12,12 +11,22 @@ import java.util.Map;
 public class TetrisComponent extends JComponent implements BoardListener {
     private final Board gameBoard;
     public final static int SQUARE_SIZE = 40;
+    private final static int SFX_SIZE = 5;
     private final static int PADDING = 5;
     private final static int FONT_SIZE = 32;
 
     final private Color bgCol;
-    final private Color titleColor;
+    // Fallthrough special block background & foreground color
+    final private Color fallthruBG;
+    final private Color fallthruFG;
+
+    // Phase special block foreground & background color
+    final private Color phaseBG;
+    final private Color phaseFG;
+
+    final private Color barColor;
     final private Color fontColor;
+    final private Color sfxFontCol;
 
     private Font dosFont;
 
@@ -26,20 +35,29 @@ public class TetrisComponent extends JComponent implements BoardListener {
 
     public TetrisComponent(final Board gameBoard) {
 
-	try {
-	    this.dosFont = Font.createFont(Font.TRUETYPE_FONT, new File("dosvga.ttf"));
-	    this.dosFont = this.dosFont.deriveFont(Font.TRUETYPE_FONT, FONT_SIZE);
+        try {
+            this.dosFont = Font.createFont(Font.TRUETYPE_FONT, new File("dosvga.ttf"));
+            this.dosFont = this.dosFont.deriveFont(Font.TRUETYPE_FONT, FONT_SIZE);
 
-	} catch (FontFormatException|IOException ex) {
-	    System.out.println(ex);
-	}
+        } catch (FontFormatException|IOException ex) {
+            System.out.println(ex);
+        }
 
         this.gameBoard = gameBoard;
 
         // Setting up the colors
-	this.titleColor = new Color(253, 253, 150);
+        this.barColor = new Color(253, 253, 150);
         this.fontColor = new Color(253, 120, 120);
-	this.bgCol = new Color(247, 247, 247);
+        this.sfxFontCol = new Color(150, 150, 253);
+
+        this.fallthruBG = new Color(253, 189, 125);
+        this.fallthruFG = new Color(253, 125, 125);
+
+        this.phaseFG = new Color(200, 227, 254);
+        this.phaseBG = new Color(150, 202, 253);
+
+        this.bgCol = new Color(247, 247, 247);
+
 
         COLORMAP.put(SquareType.EMPTY, Color.WHITE);
         COLORMAP.put(SquareType.I, new Color(252, 177, 100)); // Pastel Orange
@@ -58,29 +76,43 @@ public class TetrisComponent extends JComponent implements BoardListener {
 
     public void setupKeybindings() {
         InputMap keybinds = getInputMap(WHEN_IN_FOCUSED_WINDOW);
-        keybinds.put(KeyStroke.getKeyStroke("UP"), "Rotate");
+        keybinds.put(KeyStroke.getKeyStroke("UP"), "Up");
+        keybinds.put(KeyStroke.getKeyStroke("DOWN"), "Down");
         keybinds.put(KeyStroke.getKeyStroke("RIGHT"), "Right");
         keybinds.put(KeyStroke.getKeyStroke("LEFT"), "Left");
         keybinds.put(KeyStroke.getKeyStroke("SPACE"), "Space");
         keybinds.put(KeyStroke.getKeyStroke("D"), "Debug");
 
         ActionMap actions = getActionMap();
-        actions.put("Rotate", new RotateAction());
+        actions.put("Up", new UpAction());
         actions.put("Right", new MoveRightAction());
         actions.put("Left", new MoveLeftAction());
         actions.put("Space", new SpaceAction());
-	actions.put("Debug", new DebugAction());
+        actions.put("Down", new DownAction());
+        actions.put("Debug", new DebugAction());
     }
 
     private class DebugAction extends AbstractAction {
-	@Override public void actionPerformed(final ActionEvent e) {
-	    gameBoard.printFirstTwoColumn();
-	}
+        @Override public void actionPerformed(final ActionEvent e) {
+            gameBoard.printFirstTwoColumn();
+        }
     }
 
     private class SpaceAction extends AbstractAction {
         @Override public void actionPerformed(final ActionEvent e) {
-            while (gameBoard.getFalling() != null) {
+            if (gameBoard.getCollisionHandler().equals("phase")) {
+                gameBoard.addFalling();
+            } else {
+                while (gameBoard.getFalling() != null) {
+                    gameBoard.fall();
+                }
+            }
+        }
+    }
+
+    private class DownAction extends AbstractAction {
+        @Override public void actionPerformed(final ActionEvent e) {
+            if (gameBoard.getFalling() != null) {
                 gameBoard.fall();
             }
         }
@@ -102,10 +134,14 @@ public class TetrisComponent extends JComponent implements BoardListener {
         }
     }
 
-    private class RotateAction extends AbstractAction {
+    private class UpAction extends AbstractAction {
         @Override public void actionPerformed(final ActionEvent e) {
-            if (gameBoard.getFalling() != null) {
-                gameBoard.rotate();
+            if (gameBoard.getCollisionHandler().equals("phase")) {
+                gameBoard.moveFallingUp();
+            } else {
+                if (gameBoard.getFalling() != null) {
+                    gameBoard.rotate();
+                }
             }
         }
     }
@@ -114,42 +150,63 @@ public class TetrisComponent extends JComponent implements BoardListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         final Graphics2D tile = (Graphics2D) g;
+        final Graphics2D sfx = (Graphics2D) g.create();
 
         // Setting and drawing the background/line color.
         tile.setColor(bgCol);
         tile.fillRect(0, 0, gameBoard.getWidth() * SQUARE_SIZE + PADDING,
-                            gameBoard.getHeight() * SQUARE_SIZE + PADDING);
+                gameBoard.getHeight() * SQUARE_SIZE + PADDING);
 
         for (int y = 0; y < gameBoard.getHeight(); y++) {
             for (int x = 0; x < gameBoard.getWidth(); x++) {
                 if (drawFallingAt(x, y)) {
+                    if (gameBoard.getCollisionHandler().equals("fallthrough")) {
+                        tile.setColor(fallthruBG);
+                        sfx.setColor(fallthruFG);
+                    } else if (gameBoard.getCollisionHandler().equals("phase")) {
+                        tile.setColor(phaseBG);
+                        sfx.setColor(phaseFG);
+                    }
+                    else {
                         tile.setColor(
-				COLORMAP.get(gameBoard.getFalling().getSquareType(x - gameBoard.getFallingX(), y - gameBoard.getFallingY())));
+                                COLORMAP.get(gameBoard.getFalling().getSquareType(x - gameBoard.getFallingX(),
+                                        y - gameBoard.getFallingY())));
+                        sfx.setColor(tile.getColor());
+                    }
                 } else {
                     tile.setColor(COLORMAP.get(gameBoard.getSquareType(x, y)));
+                    sfx.setColor(tile.getColor());
                 }
 
                 tile.fillRect(x * SQUARE_SIZE + PADDING, y * SQUARE_SIZE + PADDING,
                         SQUARE_SIZE - PADDING, SQUARE_SIZE - PADDING);
+
+                sfx.fillRect(x * SQUARE_SIZE + PADDING + SFX_SIZE, y * SQUARE_SIZE + PADDING + SFX_SIZE,
+                        SQUARE_SIZE - PADDING - SFX_SIZE * 2, SQUARE_SIZE - PADDING - SFX_SIZE * 2);
+
+
             }
         }
 
-	tile.setColor(titleColor);
-	tile.fillRect(0, 0, gameBoard.getWidth() * SQUARE_SIZE + PADDING, SQUARE_SIZE);
+        tile.setColor(barColor);
+        tile.fillRect(0, 0, gameBoard.getWidth() * SQUARE_SIZE + PADDING, SQUARE_SIZE);
 
-	tile.setColor(fontColor);
-	tile.setFont(this.dosFont);
-	tile.drawString("Score: " + Integer.toString(gameBoard.score), 5, FONT_SIZE - (SQUARE_SIZE - FONT_SIZE) / 2);
-
+        tile.setColor(fontColor);
+        tile.setFont(this.dosFont);
+        tile.drawString("Score: " + Integer.toString(gameBoard.score), 5, FONT_SIZE - (SQUARE_SIZE - FONT_SIZE) / 2);
+        if (gameBoard.getCollisionHandler().equals("fallthrough")) {
+            tile.setColor(sfxFontCol);
+            tile.drawString("[FALLTHROUGH]", gameBoard.getWidth() * SQUARE_SIZE - (8 * FONT_SIZE), FONT_SIZE - (SQUARE_SIZE - FONT_SIZE) / 2);
+        }
     }
 
     private boolean drawFallingAt(int x, int y) {
         return ((gameBoard.getFalling() != null) &&
                 ((gameBoard.getFallingX() <= x && (gameBoard.getFallingX() + gameBoard.getFalling().getHeight()) > x) &&
                         (gameBoard.getFallingY() <= y && gameBoard.getFallingY() + gameBoard.getFalling().getWidth() > y) &&
-                    (gameBoard.getFalling().getSquareType(x - gameBoard.getFallingX(), y - gameBoard.getFallingY()) != SquareType.EMPTY)));
+                        (gameBoard.getFalling().getSquareType(x - gameBoard.getFallingX(), y - gameBoard.getFallingY()) != SquareType.EMPTY)));
 
-        }
+    }
 
     @Override public void boardChanged() {
         repaint();
@@ -158,6 +215,6 @@ public class TetrisComponent extends JComponent implements BoardListener {
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(gameBoard.getWidth() * SQUARE_SIZE + PADDING,
-                            gameBoard.getHeight() * SQUARE_SIZE + PADDING);
+                gameBoard.getHeight() * SQUARE_SIZE + PADDING);
     }
 }

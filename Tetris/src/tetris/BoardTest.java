@@ -1,6 +1,5 @@
 package tetris;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 
 class BoardTest {
@@ -25,7 +24,8 @@ class BoardTest {
 	        	    gameBoard.tick();
 		        } else {
                     clockTimer.stop();
-                    String name = (String) JOptionPane.showInputDialog(null, "Enter name");
+                    String name = JOptionPane.showInputDialog(null, "Enter name");
+                    name = ((name == null) || (name.isEmpty())) ? name = "N/A" : name;
                     highscore.addHighscore(name, gameBoard.score);
                     highscore.sort();
 

@@ -31,10 +31,10 @@ class TetrominoMaker {
         SquareType[][] squares = new SquareType[4][4];
         fillWithEmpty(squares);
 
-        squares[1][0] = SquareType.I;
+        squares[0][1] = SquareType.I;
         squares[1][1] = SquareType.I;
-        squares[1][2] = SquareType.I;
-        squares[1][3] = SquareType.I;
+        squares[2][1] = SquareType.I;
+        squares[3][1] = SquareType.I;
 
         return new Poly(squares);
 
