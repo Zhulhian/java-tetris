@@ -10,10 +10,14 @@ class Board
     private int width;
     private int height;
 
+    public int score;
+    private int rowsRemoved;
+
     private List<BoardListener> boardListenerList;
     private TetrominoMaker tetromaker;
 
     private Random rng;
+    private boolean gameOver;
 
     private Poly falling;
     private int fallingX, fallingY;
@@ -22,7 +26,11 @@ class Board
 	this.width = width;
 	this.height = height;
 
+	score = 0;
+	rowsRemoved = 0;
+
 	rng = new Random();
+	gameOver = false;
 
 	falling = null;
 
@@ -62,15 +70,19 @@ class Board
 	return squares[x + 2][y + 2];
     }
 
+    public boolean isGameOver() {
+	return gameOver;
+    }
+
     public void setSquareType(int x, int y, SquareType sq) {
 	squares[x + 2][y + 1] = sq;
     }
 
     public boolean hasCollision() {
 	for (int y = 0; y < falling.getHeight(); y++) {
-	    for (int x = 0; x < falling.getHeight(); x++) {
-		if (getSquareType(x + fallingX, y + fallingY) != SquareType.EMPTY &&
-		    falling.getSquareType(x, y) != SquareType.EMPTY) {
+	    for (int x = 0; x < falling.getWidth(); x++) {
+		if ((getSquareType(x + fallingX, y + fallingY) != SquareType.EMPTY) &&
+		    (falling.getSquareType(x, y) != SquareType.EMPTY)) {
 		    return true;
 		}
 	    }
@@ -88,14 +100,29 @@ class Board
 
     public void tick() {
 	if (falling == null) {
-	    fallingX = (int) (width / 2);
-	    fallingY = 0;
+	    fallingX = (int)(width / 2);
+	    fallingY = 1;
 	    falling = tetromaker.getPoly(rng.nextInt(TetrominoMaker.getNumberOfTypes()));
+
+	    if (hasCollision()) {
+		falling = null;
+	    }
+
 	} else {
+	    removeFullRows();
+	    calcScore();
 	    fall();
 	}
-	removeFullRows();
 	notifyListeners();
+    }
+
+    public void fall() {
+    	fallingY++;
+
+    	if (hasCollision()) {
+    	    fallingY--;
+    	    addFalling();
+    	}
     }
 
     public void removeRow(int row) {
@@ -127,12 +154,33 @@ class Board
 	return -1;
     }
 
-    public void removeFullRows() {
+    public void printFirstTwoColumn() {
+	for (int x = width + 2; x < width + 4; x++) { System.out.println(squares[x][fallingY]); }
+    }
 
+    public void removeFullRows() {
+	rowsRemoved = 0;
 	while (getFullRow() != -1) {
 	    removeRow(getFullRow());
+	    rowsRemoved++;
 	}
-	//notifyListeners();
+    }
+
+    public void calcScore() {
+	switch (rowsRemoved) {
+	    case 1:
+		score += 100;
+		break;
+	    case 2:
+		score += 300;
+		break;
+	    case 3:
+		score += 500;
+		break;
+	    case 4:
+		score += 800;
+		break;
+	}
     }
 
     public void moveFallingRight() {
@@ -148,7 +196,7 @@ class Board
     public void moveFallingLeft() {
 	fallingX--;
 
-	if (hasCollision()) {
+	if (fallingX < -2 || hasCollision()) {
 	    fallingX++;
 	}
 	notifyListeners();
@@ -165,15 +213,7 @@ class Board
 	notifyListeners();
     }
 
-    public void fall() {
-	fallingY++;
 
-	if (hasCollision()) {
-	    fallingY--;
-	    addFalling();
-	}
-	notifyListeners();
-    }
 
     public void addFalling() {
 	for (int y = 0; y < falling.getWidth(); y++) {
