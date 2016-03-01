@@ -100,12 +100,13 @@ class Board
 
     public void tick() {
 	if (falling == null) {
-	    fallingX = (int)(width / 2);
-	    fallingY = 1;
 	    falling = tetromaker.getPoly(rng.nextInt(TetrominoMaker.getNumberOfTypes()));
+        fallingX = (int)(width - falling.getWidth()) / 2;
+        fallingY = 1;
 
 	    if (hasCollision()) {
 		falling = null;
+            gameOver = true;
 	    }
 
 	} else {
