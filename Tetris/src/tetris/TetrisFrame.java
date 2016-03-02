@@ -7,10 +7,11 @@ import java.awt.event.ActionListener;
 
 
 class TetrisFrame extends JFrame {
-    private final Board gameBoard;
+    private Board gameBoard;
     private TetrisComponent tetrisComponent;
+    private HighscoreComponent highscoreComponent;
 
-    public TetrisFrame(Board gameBoard) throws HeadlessException {
+    TetrisFrame(Board gameBoard) throws HeadlessException {
         super(" / T E T R I S / ");
 
         this.gameBoard = gameBoard;
@@ -36,9 +37,7 @@ class TetrisFrame extends JFrame {
         reset.addActionListener(new ActionListener()
         {
             @Override public void actionPerformed(final ActionEvent e) {
-                gameBoard.resetBoard();
-                tetrisComponent = new TetrisComponent(gameBoard);
-                
+                resetGame();
             }
         });
 
@@ -51,9 +50,19 @@ class TetrisFrame extends JFrame {
         this.setJMenuBar(menu);
     }
 
+    public void resetGame() {
+        this.remove(highscoreComponent);
+        gameBoard.resetBoard();
+        tetrisComponent = new TetrisComponent(gameBoard);
+        gameBoard.addBoardListener(tetrisComponent);
+        BoardTest.clockTimer.start();
+        this.add(tetrisComponent);
+        this.pack();
+    }
+
 
     public void showHighscore(HighscoreList hs) {
-        HighscoreComponent highscoreComponent = new HighscoreComponent(hs);
+        highscoreComponent = new HighscoreComponent(hs);
         this.remove(tetrisComponent);
         this.add(highscoreComponent);
         this.pack();

@@ -6,7 +6,12 @@ import java.util.Random;
 
 class Board
 {
-	private SquareType[][] squares;
+    public static final int FALLTHRU_REQ = 15;
+    public static final int SCORE_1_ROW = 100;
+    public static final int SCORE_2_ROW = 300;
+    public static final int SCORE_3_ROW = 500;
+    public static final int SCORE_4_ROW = 800;
+    private SquareType[][] squares;
 	private int width;
 	private int height;
 
@@ -25,7 +30,7 @@ class Board
 
 	private CollisionHandler collision;
 
-	public Board(final int width, final int height) {
+	Board(final int width, final int height) {
 		this.width = width;
 		this.height = height - 1; // For the score/powerup bar
 
@@ -89,7 +94,7 @@ class Board
 	}
 
 	public void setSquareType(int x, int y, SquareType sq) {
-		squares[x + 2][y + 1] = sq;
+		squares[x + 2][y + 2] = sq;
 	}
 
 	public void addBoardListener(BoardListener bl) {
@@ -121,7 +126,7 @@ class Board
 
 		} else {
 			// How many rotations to get fallthrough powerup
-			if (rotateCount > 15) {
+			if (rotateCount > FALLTHRU_REQ) {
 				collision = new Fallthrough();
 			}
 
@@ -195,16 +200,16 @@ class Board
 	public void calcScore() {
 		switch (rowsRemoved) {
 			case 1:
-				score += 100;
+				score += SCORE_1_ROW;
 				break;
 			case 2:
-				score += 300;
+				score += SCORE_2_ROW;
 				break;
 			case 3:
-				score += 500;
+				score += SCORE_3_ROW;
 				break;
 			case 4:
-				score += 800;
+				score += SCORE_4_ROW;
 				break;
 		}
 	}

@@ -82,7 +82,7 @@ public class TetrisComponent extends JComponent implements BoardListener {
         keybinds.put(KeyStroke.getKeyStroke("LEFT"), "Left");
         keybinds.put(KeyStroke.getKeyStroke("SPACE"), "Space");
         keybinds.put(KeyStroke.getKeyStroke("D"), "Debug");
-	keybinds.put(KeyStroke.getKeyStroke("C"), "PhaseRotate");
+	keybinds.put(KeyStroke.getKeyStroke("C"), "AltRotate");
 
         ActionMap actions = getActionMap();
         actions.put("Up", new UpAction());
@@ -91,7 +91,7 @@ public class TetrisComponent extends JComponent implements BoardListener {
         actions.put("Space", new SpaceAction());
         actions.put("Down", new DownAction());
         actions.put("Debug", new DebugAction());
-	actions.put("PhaseRotate", new PhaseRotateAction());
+	actions.put("AltRotate", new AltRotateAction());
     }
 
     private class DebugAction extends AbstractAction {
@@ -100,9 +100,9 @@ public class TetrisComponent extends JComponent implements BoardListener {
         }
     }
 
-    private class PhaseRotateAction extends AbstractAction {
+    private class AltRotateAction extends AbstractAction {
 	@Override public void actionPerformed(final ActionEvent e) {
-	    if (gameBoard.getCollisionHandler().equals("phase") && gameBoard.getFalling() != null) {
+	    if (gameBoard.getFalling() != null) {
 		gameBoard.rotate();
 	    }
 	}
@@ -111,7 +111,7 @@ public class TetrisComponent extends JComponent implements BoardListener {
     private class SpaceAction extends AbstractAction {
         @Override public void actionPerformed(final ActionEvent e) {
             if (gameBoard.getCollisionHandler().equals("phase")) {
-                gameBoard.addFalling();
+                if (gameBoard.getFalling() != null) gameBoard.addFalling();
             } else {
                 while (gameBoard.getFalling() != null) {
                     gameBoard.fall();

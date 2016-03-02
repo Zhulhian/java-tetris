@@ -1,6 +1,8 @@
 package tetris;
 
-public class BoardToTextConverter {
+public final class BoardToTextConverter {
+
+    private BoardToTextConverter() {}
 
     enum SquareChar {
         EMPTY('\u22C5'), I('\u2503'), O('\u25FC'), T('\u2533'),
