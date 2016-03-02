@@ -27,7 +27,7 @@ class Board
 
 	public Board(final int width, final int height) {
 		this.width = width;
-		this.height = height;
+		this.height = height - 1; // For the score/powerup bar
 
 		score = 0;
 		rowsRemoved = 0;
@@ -64,6 +64,14 @@ class Board
 
 	}
 
+    public void resetBoard() {
+	score = 0;
+	falling = null;
+	gameOver = false;
+
+	createBoard();
+    }
+
 	public int getWidth() {
 		return width;
 	}
@@ -99,7 +107,7 @@ class Board
 			fallingY = 1;
 			rotateCount = 0;
 
-			if (rng.nextInt(10) > 1) {
+			if (rng.nextInt(10) < 1) {
 				collision = new Phase();
 			}
 			else if (collision.getClass() != DefaultCollisionHandler.class) {
@@ -147,7 +155,7 @@ class Board
 		}
 
 		for (int x = 2; x <= width + 2; x++) {
-			System.arraycopy(squares[x], 2, squares[x], 3, row - 2);
+			System.arraycopy(squares[x], 3, squares[x], 4, row - 3);
 		}
 	}
 
@@ -169,8 +177,10 @@ class Board
 		return -1;
 	}
 
-	public void printFirstTwoColumn() {
-		randomizeBoard();
+	public void debug() {
+	    for (int i = 0; i < 5; i++) {
+		squares[3][i] = SquareType.S;
+	    }
 	}
 
 	public void removeFullRows() {

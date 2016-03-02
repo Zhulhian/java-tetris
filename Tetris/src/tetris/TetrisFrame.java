@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 
 class TetrisFrame extends JFrame {
     private final Board gameBoard;
-    private final TetrisComponent tetrisComponent;
+    private TetrisComponent tetrisComponent;
 
     public TetrisFrame(Board gameBoard) throws HeadlessException {
         super(" / T E T R I S / ");
@@ -31,9 +31,20 @@ class TetrisFrame extends JFrame {
 
         final JMenu settings = new JMenu("Settings");
         final JMenuItem quit = new JMenuItem("Quit");
+        final JMenuItem reset = new JMenuItem("Reset");
+
+        reset.addActionListener(new ActionListener()
+        {
+            @Override public void actionPerformed(final ActionEvent e) {
+                gameBoard.resetBoard();
+                tetrisComponent = new TetrisComponent(gameBoard);
+                
+            }
+        });
 
         quit.addActionListener(new ExitListener());
         settings.add(quit);
+        settings.add(reset);
 
         menu.add(settings);
 

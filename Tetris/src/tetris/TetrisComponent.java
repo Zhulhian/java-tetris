@@ -82,6 +82,7 @@ public class TetrisComponent extends JComponent implements BoardListener {
         keybinds.put(KeyStroke.getKeyStroke("LEFT"), "Left");
         keybinds.put(KeyStroke.getKeyStroke("SPACE"), "Space");
         keybinds.put(KeyStroke.getKeyStroke("D"), "Debug");
+	keybinds.put(KeyStroke.getKeyStroke("C"), "PhaseRotate");
 
         ActionMap actions = getActionMap();
         actions.put("Up", new UpAction());
@@ -90,12 +91,21 @@ public class TetrisComponent extends JComponent implements BoardListener {
         actions.put("Space", new SpaceAction());
         actions.put("Down", new DownAction());
         actions.put("Debug", new DebugAction());
+	actions.put("PhaseRotate", new PhaseRotateAction());
     }
 
     private class DebugAction extends AbstractAction {
         @Override public void actionPerformed(final ActionEvent e) {
-            gameBoard.printFirstTwoColumn();
+            gameBoard.debug();
         }
+    }
+
+    private class PhaseRotateAction extends AbstractAction {
+	@Override public void actionPerformed(final ActionEvent e) {
+	    if (gameBoard.getCollisionHandler().equals("phase") && gameBoard.getFalling() != null) {
+		gameBoard.rotate();
+	    }
+	}
     }
 
     private class SpaceAction extends AbstractAction {
@@ -197,6 +207,9 @@ public class TetrisComponent extends JComponent implements BoardListener {
         if (gameBoard.getCollisionHandler().equals("fallthrough")) {
             tile.setColor(sfxFontCol);
             tile.drawString("[FALLTHROUGH]", gameBoard.getWidth() * SQUARE_SIZE - (8 * FONT_SIZE), FONT_SIZE - (SQUARE_SIZE - FONT_SIZE) / 2);
+        } else if (gameBoard.getCollisionHandler().equals("phase")) {
+            tile.setColor(sfxFontCol);
+	    tile.drawString("[PHASE]", gameBoard.getWidth() * SQUARE_SIZE - (4 * FONT_SIZE), FONT_SIZE - (SQUARE_SIZE - FONT_SIZE) / 2);
         }
     }
 

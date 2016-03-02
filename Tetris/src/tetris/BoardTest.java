@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 class BoardTest {
 
     public static final int WIDTH = 12;
-    public static final int HEIGHT = 21;
+    public static final int HEIGHT = 20;
     public static final int DELAY = 500;
 
     private static Timer clockTimer;
@@ -14,7 +14,7 @@ class BoardTest {
 
     public static void main(String[] args) {
 
-        Board gameBoard = new Board(WIDTH, HEIGHT);
+        Board gameBoard = new Board(WIDTH, HEIGHT + 1);
         TetrisFrame gameFrame = new TetrisFrame(gameBoard);
         HighscoreList highscore = HighscoreList.getInstance();
 
@@ -38,7 +38,5 @@ class BoardTest {
         clockTimer = new Timer(DELAY, doOneStep);
         clockTimer.setCoalesce(true);
         clockTimer.start();
-
-        //clockTimer.stop();
     }
 }
