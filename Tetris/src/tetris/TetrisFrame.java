@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 
 
 class TetrisFrame extends JFrame {
-    private Board gameBoard;
+    private final Board gameBoard;
     private TetrisComponent tetrisComponent;
     private HighscoreComponent highscoreComponent;
 
@@ -34,12 +34,7 @@ class TetrisFrame extends JFrame {
         final JMenuItem quit = new JMenuItem("Quit");
         final JMenuItem reset = new JMenuItem("Reset");
 
-        reset.addActionListener(new ActionListener()
-        {
-            @Override public void actionPerformed(final ActionEvent e) {
-                resetGame();
-            }
-        });
+        reset.addActionListener(e -> resetGame());
 
         quit.addActionListener(new ExitListener());
         settings.add(quit);
@@ -50,7 +45,7 @@ class TetrisFrame extends JFrame {
         this.setJMenuBar(menu);
     }
 
-    public void resetGame() {
+    private void resetGame() {
         this.remove(highscoreComponent);
         gameBoard.resetBoard();
         tetrisComponent = new TetrisComponent(gameBoard);

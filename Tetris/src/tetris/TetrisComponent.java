@@ -11,11 +11,18 @@ import java.util.Map;
 public class TetrisComponent extends JComponent implements BoardListener {
     private final Board gameBoard;
     public final static int SQUARE_SIZE = 40;
+    private final static int BAR_HEIGHT = 40;
     private final static int SFX_SIZE = 5;
     private final static int PADDING = 5;
     private final static int FONT_SIZE = 32;
+	//private final static int PAUSE_FONT_SIZE = 64;
+
 
     final private Color bgCol;
+
+	// Color for the pause screen, when/if I implement it.
+	//final private Color pauseBG;
+
     // Fallthrough special block background & foreground color
     final private Color fallthruBG;
     final private Color fallthruFG;
@@ -30,6 +37,9 @@ public class TetrisComponent extends JComponent implements BoardListener {
 
     private Font dosFont;
 
+	// Pause screen font, for when/if I implement it.
+	//private final Font pauseFont;
+
     private static final Map<SquareType, Color> COLORMAP =
             new EnumMap<>(SquareType.class);
 
@@ -42,6 +52,8 @@ public class TetrisComponent extends JComponent implements BoardListener {
         } catch (FontFormatException|IOException ex) {
             System.out.println(ex);
         }
+
+	    //pauseFont = dosFont.deriveFont(Font.BOLD, PAUSE_FONT_SIZE);
 
         this.gameBoard = gameBoard;
 
@@ -57,6 +69,7 @@ public class TetrisComponent extends JComponent implements BoardListener {
         this.phaseBG = new Color(150, 202, 253);
 
         this.bgCol = new Color(247, 247, 247);
+	    //this.pauseBG = new Color(120, 253, 187);
 
 
         COLORMAP.put(SquareType.EMPTY, Color.WHITE);
@@ -74,15 +87,14 @@ public class TetrisComponent extends JComponent implements BoardListener {
 
     }
 
-    public void setupKeybindings() {
+    private void setupKeybindings() {
         InputMap keybinds = getInputMap(WHEN_IN_FOCUSED_WINDOW);
         keybinds.put(KeyStroke.getKeyStroke("UP"), "Up");
         keybinds.put(KeyStroke.getKeyStroke("DOWN"), "Down");
         keybinds.put(KeyStroke.getKeyStroke("RIGHT"), "Right");
         keybinds.put(KeyStroke.getKeyStroke("LEFT"), "Left");
         keybinds.put(KeyStroke.getKeyStroke("SPACE"), "Space");
-        keybinds.put(KeyStroke.getKeyStroke("D"), "Debug");
-	keybinds.put(KeyStroke.getKeyStroke("C"), "AltRotate");
+		keybinds.put(KeyStroke.getKeyStroke("C"), "AltRotate");
 
         ActionMap actions = getActionMap();
         actions.put("Up", new UpAction());
@@ -90,14 +102,7 @@ public class TetrisComponent extends JComponent implements BoardListener {
         actions.put("Left", new MoveLeftAction());
         actions.put("Space", new SpaceAction());
         actions.put("Down", new DownAction());
-        actions.put("Debug", new DebugAction());
-	actions.put("AltRotate", new AltRotateAction());
-    }
-
-    private class DebugAction extends AbstractAction {
-        @Override public void actionPerformed(final ActionEvent e) {
-            gameBoard.debug();
-        }
+		actions.put("AltRotate", new AltRotateAction());
     }
 
     private class AltRotateAction extends AbstractAction {
@@ -164,7 +169,7 @@ public class TetrisComponent extends JComponent implements BoardListener {
 
         // Setting and drawing the background/line color.
         tile.setColor(bgCol);
-        tile.fillRect(0, 0, gameBoard.getWidth() * SQUARE_SIZE + PADDING,
+        tile.fillRect(0, BAR_HEIGHT, gameBoard.getWidth() * SQUARE_SIZE + PADDING,
                 gameBoard.getHeight() * SQUARE_SIZE + PADDING);
 
         for (int y = 0; y < gameBoard.getHeight(); y++) {
@@ -188,10 +193,10 @@ public class TetrisComponent extends JComponent implements BoardListener {
                     sfx.setColor(tile.getColor());
                 }
 
-                tile.fillRect(x * SQUARE_SIZE + PADDING, y * SQUARE_SIZE + PADDING,
+                tile.fillRect(x * SQUARE_SIZE + PADDING, y * SQUARE_SIZE + PADDING + BAR_HEIGHT,
                         SQUARE_SIZE - PADDING, SQUARE_SIZE - PADDING);
 
-                sfx.fillRect(x * SQUARE_SIZE + PADDING + SFX_SIZE, y * SQUARE_SIZE + PADDING + SFX_SIZE,
+                sfx.fillRect(x * SQUARE_SIZE + PADDING + SFX_SIZE, y * SQUARE_SIZE + PADDING + SFX_SIZE + BAR_HEIGHT,
                         SQUARE_SIZE - PADDING - SFX_SIZE * 2, SQUARE_SIZE - PADDING - SFX_SIZE * 2);
 
 
@@ -199,7 +204,7 @@ public class TetrisComponent extends JComponent implements BoardListener {
         }
 
         tile.setColor(barColor);
-        tile.fillRect(0, 0, gameBoard.getWidth() * SQUARE_SIZE + PADDING, SQUARE_SIZE);
+        tile.fillRect(0, 0, gameBoard.getWidth() * SQUARE_SIZE + PADDING, BAR_HEIGHT);
 
         tile.setColor(fontColor);
         tile.setFont(this.dosFont);
@@ -211,6 +216,17 @@ public class TetrisComponent extends JComponent implements BoardListener {
             tile.setColor(sfxFontCol);
 	    tile.drawString("[PHASE]", gameBoard.getWidth() * SQUARE_SIZE - (4 * FONT_SIZE), FONT_SIZE - (SQUARE_SIZE - FONT_SIZE) / 2);
         }
+
+	    // For eventually implementing a pause screen. Can't bear to remove it.
+//	    if (gameBoard.isPaused) {
+//		    int centerX = ((gameBoard.getWidth() * SQUARE_SIZE) / 2) - (("PAUSE".length() * PAUSE_FONT_SIZE) / 2) + PAUSE_FONT_SIZE;
+//		    int centerY = gameBoard.getHeight() * SQUARE_SIZE / 2;
+//		    sfx.setColor(pauseBG);
+//			tile.setColor(fontColor);
+//		    tile.setFont(pauseFont);
+//		    sfx.fillRect(centerX - PADDING, centerY - SQUARE_SIZE - 16, "PAUSE".length() * SQUARE_SIZE + PADDING, PAUSE_FONT_SIZE + PADDING);
+//		    tile.drawString("PAUSE", centerX, centerY);
+//	    }
     }
 
     private boolean drawFallingAt(int x, int y) {
@@ -228,6 +244,6 @@ public class TetrisComponent extends JComponent implements BoardListener {
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(gameBoard.getWidth() * SQUARE_SIZE + PADDING,
-                gameBoard.getHeight() * SQUARE_SIZE + PADDING);
+                gameBoard.getHeight() * SQUARE_SIZE + PADDING + BAR_HEIGHT);
     }
 }

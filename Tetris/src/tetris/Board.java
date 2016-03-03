@@ -6,39 +6,50 @@ import java.util.Random;
 
 class Board
 {
-    public static final int FALLTHRU_REQ = 15;
-    public static final int SCORE_1_ROW = 100;
-    public static final int SCORE_2_ROW = 300;
-    public static final int SCORE_3_ROW = 500;
-    public static final int SCORE_4_ROW = 800;
-    private SquareType[][] squares;
-	private int width;
-	private int height;
+	// How many rotations it takes to activate the FALLTHROUGH power-up.
+    private static final int FALLTHRU_REQ = 22;
+	public static final int PHASE_CHANCE = 13;
 
+	// Score variables and constants.
 	public int score;
 	private int rowsRemoved;
+	private static final int SCORE_1_ROW = 100;
+    private static final int SCORE_2_ROW = 300;
+    private static final int SCORE_3_ROW = 500;
+    private static final int SCORE_4_ROW = 800;
+
+	// Multidimensional array for storing the squares.
+    private final SquareType[][] squares;
+	private final int width;
+	private final int height;
+
+	// Needed for the activation of the fallthrough power-up.
 	private int rotateCount;
 
-	private List<BoardListener> boardListenerList;
-	private TetrominoMaker tetromaker;
+	private final List<BoardListener> boardListenerList;
+	private final TetrominoMaker tetromaker;
+	private CollisionHandler collision;
 
-	private Random rng;
+	private final Random rng;
+
 	private boolean gameOver;
+
 
 	private Poly falling;
 	private int fallingX, fallingY;
 
-	private CollisionHandler collision;
 
 	Board(final int width, final int height) {
 		this.width = width;
-		this.height = height - 1; // For the score/powerup bar
-
+		// I subtract one from height because I want a bar for score
+		// and power-up notification.
+		this.height = height;
 		score = 0;
 		rowsRemoved = 0;
 		rotateCount = 0;
 
 		rng = new Random();
+
 		gameOver = false;
 
 		falling = null;
@@ -48,20 +59,21 @@ class Board
 		boardListenerList = new ArrayList<>();
 		tetromaker = new TetrominoMaker();
 
-		// 2 is the outside space for collision handling.
+		// I add 4 because there will be 2 spaces above and under that are OUTSIDE
+		// and 2 to the right and left.
 		squares = new SquareType[this.width + 4][this.height + 4];
 
 		createBoard();
 	}
 
-	public void createBoard() {
+	private void createBoard() {
 		for (int y = 0; y < this.height + 4; y++) {
 			for (int x = 0; x < this.width + 4; x++) {
 				squares[x][y] = SquareType.OUTSIDE;
 			}
 		}
 
-		for (int y = 3; y < this.height + 2; y++) {
+		for (int y = 2; y < this.height + 2; y++) {
 			for (int x = 2; x < this.width + 2; x++) {
 				squares[x][y] = SquareType.EMPTY;
 			}
@@ -89,8 +101,8 @@ class Board
 		return squares[x + 2][y + 2];
 	}
 
-	public boolean isGameOver() {
-		return gameOver;
+	public boolean isGameRunning() {
+		return !gameOver;
 	}
 
 	public void setSquareType(int x, int y, SquareType sq) {
@@ -101,18 +113,14 @@ class Board
 		boardListenerList.add(bl);
 	}
 
-	public void removeBoardListener(BoardListener bl) {
-		boardListenerList.remove(bl);
-	}
-
 	public void tick() {
 		if (falling == null) {
 			falling = tetromaker.getPoly(rng.nextInt(TetrominoMaker.getNumberOfTypes()));
 			fallingX = (width - falling.getWidth()) / 2;
-			fallingY = 1;
+			fallingY = 0;
 			rotateCount = 0;
 
-			if (rng.nextInt(10) < 1) {
+			if (rng.nextInt(PHASE_CHANCE) > 1) {
 				collision = new Phase();
 			}
 			else if (collision.getClass() != DefaultCollisionHandler.class) {
@@ -153,7 +161,7 @@ class Board
 		return collision.getDescription();
 	}
 
-	public void removeRow(int row) {
+	private void removeRow(int row) {
 
 		for (int x = 2; x <= width + 2; x++) {
 			squares[x][row] = SquareType.EMPTY;
@@ -162,6 +170,8 @@ class Board
 		for (int x = 2; x <= width + 2; x++) {
 			System.arraycopy(squares[x], 3, squares[x], 4, row - 3);
 		}
+
+		notifyListeners();
 	}
 
 	private boolean rowIsFull(int row) {
@@ -174,7 +184,7 @@ class Board
 	}
 
 	private int getFullRow() {
-		for (int row = 3; row < height + 2; row++) {
+		for (int row = 2; row < height + 2; row++) {
 			if (rowIsFull(row)) {
 				return row;
 			}
@@ -182,22 +192,16 @@ class Board
 		return -1;
 	}
 
-	public void debug() {
-	    for (int i = 0; i < 5; i++) {
-		squares[3][i] = SquareType.S;
-	    }
-	}
-
-	public void removeFullRows() {
+	private void removeFullRows() {
 		rowsRemoved = 0;
 		while (getFullRow() != -1) {
 			removeRow(getFullRow());
 			rowsRemoved++;
 		}
-		notifyListeners();
+		//notifyListeners();
 	}
 
-	public void calcScore() {
+	private void calcScore() {
 		switch (rowsRemoved) {
 			case 1:
 				score += SCORE_1_ROW;
@@ -273,13 +277,12 @@ class Board
 	}
 
 	public void randomizeBoard() {
-		java.util.Random rng = new java.util.Random();
 
 		SquareType[] squareTypes = SquareType.values();
 
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				squares[i][j] = squareTypes[rng.nextInt(squareTypes.length)];
+				squares[i][j] = squareTypes[rng.nextInt(TetrominoMaker.getNumberOfTypes())];
 			}
 		}
 

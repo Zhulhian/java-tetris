@@ -118,7 +118,7 @@ class TetrominoMaker {
         return new Poly(squares);
     }
 
-    public void fillWithEmpty(SquareType[][] blocks) {
+    private void fillWithEmpty(SquareType[][] blocks) {
         for (int i = 0; i < blocks.length; i++) {
             for (int j = 0; j < blocks.length; j++) {
                 blocks[j][i] = SquareType.EMPTY;

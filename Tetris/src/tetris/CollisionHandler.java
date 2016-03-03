@@ -1,7 +1,7 @@
 package tetris;
 
-public interface CollisionHandler {
-	public boolean hasCollision(Board gameBoard);
+interface CollisionHandler {
+	boolean hasCollision(Board gameBoard);
 
-	public String getDescription();
+	String getDescription();
 }

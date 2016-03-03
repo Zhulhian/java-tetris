@@ -1,5 +1,5 @@
 package tetris;
 
-public interface BoardListener {
+interface BoardListener {
     void boardChanged();
 }

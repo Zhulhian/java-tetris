@@ -7,7 +7,7 @@ import java.util.List;
 public final class HighscoreList {
 
     private static final HighscoreList INSTANCE = new HighscoreList();
-    private List<Score> highscoreList;
+    private final List<Score> highscoreList;
 
     private HighscoreList() {
         highscoreList = new ArrayList<>();

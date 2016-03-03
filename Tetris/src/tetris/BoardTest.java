@@ -4,9 +4,9 @@ import java.awt.event.ActionEvent;
 
 final class BoardTest {
 
-    public static final int WIDTH = 12;
+    public static final int WIDTH = 14;
     public static final int HEIGHT = 20;
-    public static final int DELAY = 500;
+    private static final int DELAY = 500;
 
     public static Timer clockTimer;
 
@@ -14,13 +14,13 @@ final class BoardTest {
 
     public static void main(String[] args) {
 
-	Board gameBoard = new Board(WIDTH, HEIGHT + 1);
+	Board gameBoard = new Board(WIDTH, HEIGHT);
 	TetrisFrame gameFrame = new TetrisFrame(gameBoard);
 	HighscoreList highscore = HighscoreList.getInstance();
 
 	final Action doOneStep = new AbstractAction() {
 	    public void actionPerformed(ActionEvent e) {
-		if (!gameBoard.isGameOver()) {
+		if (gameBoard.isGameRunning()) {
 		    gameBoard.tick();
 		} else {
 		    clockTimer.stop();
@@ -41,4 +41,6 @@ final class BoardTest {
 	clockTimer.setCoalesce(true);
 	clockTimer.start();
     }
+
+
 }

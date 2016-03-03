@@ -2,12 +2,11 @@ package tetris;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
-public class HighscoreComponent extends JComponent {
-    private HighscoreList highscoreList;
+class HighscoreComponent extends JComponent {
+    private final HighscoreList highscoreList;
 
     private Font entryFont;
     private Font titleFont;

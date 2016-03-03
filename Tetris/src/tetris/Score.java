@@ -1,8 +1,8 @@
 package tetris;
 
-public class Score implements Comparable<Score> {
-    int score;
-    String name;
+class Score implements Comparable<Score> {
+    final int score;
+    final String name;
 
     public Score(int score, String name) {
         this.score = score;
