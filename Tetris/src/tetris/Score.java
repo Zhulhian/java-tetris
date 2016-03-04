@@ -5,6 +5,8 @@ package tetris;
  * be compared to other scores with compareTo().
  */
 class Score implements Comparable<Score> {
+    // I don't really need the equals method of comparable so I'm not
+    // going to implement it. Hope that is ok.
     public final int score;
     public final String name;
 

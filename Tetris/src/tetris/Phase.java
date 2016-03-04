@@ -1,5 +1,8 @@
 package tetris;
 
+/**
+ * Collision handler for the phase power-up. It's the same as the default one
+ */
 public class Phase implements CollisionHandler {
 	@Override
 	public boolean hasCollision(Board gameBoard) {
@@ -10,7 +13,8 @@ public class Phase implements CollisionHandler {
 				if ((gameBoard.getSquareType(x + gameBoard.getFallingX(),
 						y + gameBoard.getFallingY()) != SquareType.EMPTY) &&
 						(gameBoard.getFalling().getSquareType(x, y) != SquareType.EMPTY)) {
-					return true;
+
+				    return true;
 				}
 			}
 		}

@@ -15,8 +15,8 @@ final class BoardTest {
 	private static final int DELAY = 500;
 
 	// I make the clockTimer public so it can be stopped and started
-	// in the tetrisFrame.
-	public static Timer clockTimer;
+	// in the tetrisFrame. Initialized to null. Is later initialized to a new Timer.
+	public static Timer clockTimer = null;
 
 	private BoardTest() {}
 

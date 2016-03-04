@@ -11,7 +11,7 @@ import java.io.IOException;
 class HighscoreComponent extends JComponent {
     private final HighscoreList highscoreList;
 
-    // If the fonts don't get iniitialized, it falls back to the default font.
+    // If the fonts don't get initialized, it falls back to the default font.
     private Font entryFont;
     private Font titleFont;
     private final static int FONT_SIZE = 32;

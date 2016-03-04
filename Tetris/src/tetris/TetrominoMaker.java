@@ -14,6 +14,9 @@ class TetrominoMaker {
 		if (n < 0 || n > 6) {
 			throw new IllegalArgumentException("Only 7 kinds of polyminos. Starts at 0, ends at 6.");
 		}
+            // The part in the code where I use this gets it's n from TetrominoMaker.getNumberOfTypes()
+            // which only returns n values that aren't OUTSIDE or EMPTY, since we don't want those.
+            // They are placed last in the ENUM, so they are at index 7 and 8.
 		switch (SquareType.values()[n]) {
 			case I:
 				return createIPiece();

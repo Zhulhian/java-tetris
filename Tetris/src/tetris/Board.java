@@ -10,11 +10,12 @@ import java.util.Random;
  * */
 class Board
 {
-	// How many rotations it takes to activate the FALLTHROUGH power-up.
+    // How many rotations it takes to activate the FALLTHROUGH power-up.
 	private static final int FALLTHRU_REQ = 22;
 	public static final int PHASE_CHANCE = 13;
+    public static final int NO_ROW_FOUND = -99;
 
-	// Score variables and constants.
+    // Score variables and constants.
 	public int score;
 	private int rowsRemoved;
 	private static final int SCORE_1_ROW = 100;
@@ -143,7 +144,7 @@ class Board
 				rotateCount = 0;
 
 				// See if the gods of chaos wants it to be a phase type.
-				if (rng.nextInt(PHASE_CHANCE) < 1) {
+				if (rng.nextInt(PHASE_CHANCE) > 1) {
 					collision = new Phase();
 				// If not, we create a normal one.
 				} else if (collision.getClass() != DefaultCollisionHandler.class) {
@@ -228,14 +229,14 @@ class Board
 				return row;
 			}
 		}
-		return -99;
+		return NO_ROW_FOUND;
 	}
 
 	// Sets rowsRemoved to zero, then removes all full rows and then
 	// increments it by one for every removed row.
 	private void removeFullRows() {
 		rowsRemoved = 0;
-		while (getFullRow() != -99) {
+		while (getFullRow() != NO_ROW_FOUND) {
 			removeRow(getFullRow());
 			rowsRemoved++;
 		}
