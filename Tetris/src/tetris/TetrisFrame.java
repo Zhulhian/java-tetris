@@ -9,6 +9,9 @@ import java.awt.event.ActionListener;
 class TetrisFrame extends JFrame {
     private final Board gameBoard;
     private TetrisComponent tetrisComponent;
+    // Might not get initialized during object construction, but it gets initialized
+    // when it is used, in the showHighscore function, since it get's the highscore
+    // list from there.
     private HighscoreComponent highscoreComponent;
 
     TetrisFrame(Board gameBoard) throws HeadlessException {
@@ -46,10 +49,15 @@ class TetrisFrame extends JFrame {
     }
 
     private void resetGame() {
-        this.remove(highscoreComponent);
+        if (highscoreComponent != null) {
+            this.remove(highscoreComponent);
+        } else {
+            this.remove(tetrisComponent);
+        }
         gameBoard.resetBoard();
         tetrisComponent = new TetrisComponent(gameBoard);
         gameBoard.addBoardListener(tetrisComponent);
+
         BoardTest.clockTimer.start();
         this.add(tetrisComponent);
         this.pack();

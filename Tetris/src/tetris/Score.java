@@ -1,10 +1,10 @@
 package tetris;
 
 class Score implements Comparable<Score> {
-    final int score;
-    final String name;
+    public final int score;
+    public final String name;
 
-    public Score(int score, String name) {
+    Score(int score, String name) {
         this.score = score;
         this.name = name;
     }

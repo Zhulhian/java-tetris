@@ -1,11 +1,15 @@
 package tetris;
 
 class TetrominoMaker {
+    // I subtract with 2 because I don't want OUTSIDE or EMPTY blocks in the number of block types
+    // Last two in the SquareType list are OUTSIDE and EMPTY.
     public static int getNumberOfTypes() {
         return SquareType.values().length - 2 ;
     }
 
     public Poly getPoly(int n) {
+        // I don't bother catching OUTSIDE and EMPTY here because the randomly generated number used is never greater than 6,
+        // since it gets its n from getNumberOfTypes() above.
         switch (SquareType.values()[n]) {
             case I:
                 return createIPiece();
