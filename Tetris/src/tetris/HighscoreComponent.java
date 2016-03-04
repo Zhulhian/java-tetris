@@ -5,6 +5,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Component for drawing the highscore list.
+ */
 class HighscoreComponent extends JComponent {
     private final HighscoreList highscoreList;
 

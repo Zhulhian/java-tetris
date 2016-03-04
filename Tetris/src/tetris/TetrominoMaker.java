@@ -1,133 +1,139 @@
 package tetris;
 
+/**
+ * Class for making tetrominos. Use getPoly(n) to get a poly between 0 and 6.
+ */
 class TetrominoMaker {
-    // I subtract with 2 because I don't want OUTSIDE or EMPTY blocks in the number of block types
-    // Last two in the SquareType list are OUTSIDE and EMPTY.
-    public static int getNumberOfTypes() {
-        return SquareType.values().length - 2 ;
-    }
+	// I subtract with 2 because I don't want OUTSIDE or EMPTY blocks in the number of block types
+	// Last two in the SquareType list are OUTSIDE and EMPTY.
+	public static int getNumberOfTypes() {
+		return SquareType.values().length - 2 ;
+	}
 
-    public Poly getPoly(int n) {
-        // I don't bother catching OUTSIDE and EMPTY here because the randomly generated number used is never greater than 6,
-        // since it gets its n from getNumberOfTypes() above.
-        switch (SquareType.values()[n]) {
-            case I:
-                return createIPiece();
-            case O:
-                return createOPiece();
-            case L:
-                return createLPiece();
-            case J:
-                return createJPiece();
-            case S:
-                return createSPiece();
-            case Z:
-                return createZPiece();
-            case T:
-                return createTPiece();
-            default:
-                return null;
-        }
-    }
+	public Poly getPoly(int n) {
+		if (n < 0 || n > 6) {
+			throw new IllegalArgumentException("Only 7 kinds of polyminos. Starts at 0, ends at 6.");
+		}
+		switch (SquareType.values()[n]) {
+			case I:
+				return createIPiece();
+			case O:
+				return createOPiece();
+			case L:
+				return createLPiece();
+			case J:
+				return createJPiece();
+			case S:
+				return createSPiece();
+			case Z:
+				return createZPiece();
+			case T:
+				return createTPiece();
+			default:
+				return null;
+		}
+	}
 
-    private Poly createIPiece() {
+	// Separate function for every piece. Pretty self-explanatory.
 
-        SquareType[][] squares = new SquareType[4][4];
-        fillWithEmpty(squares);
+	private Poly createIPiece() {
 
-        squares[0][1] = SquareType.I;
-        squares[1][1] = SquareType.I;
-        squares[2][1] = SquareType.I;
-        squares[3][1] = SquareType.I;
+		SquareType[][] squares = new SquareType[4][4];
+		fillWithEmpty(squares);
 
-        return new Poly(squares);
+		squares[0][1] = SquareType.I;
+		squares[1][1] = SquareType.I;
+		squares[2][1] = SquareType.I;
+		squares[3][1] = SquareType.I;
 
-    }
+		return new Poly(squares);
 
-    private Poly createSPiece() {
+	}
 
-        SquareType[][] squares = new SquareType[3][3];
-        fillWithEmpty(squares);
+	private Poly createSPiece() {
 
-        squares[1][0] = SquareType.S;
-        squares[2][0] = SquareType.S;
-        squares[0][1] = SquareType.S;
-        squares[1][1] = SquareType.S;
+		SquareType[][] squares = new SquareType[3][3];
+		fillWithEmpty(squares);
 
-        return new Poly(squares);
-    }
+		squares[1][0] = SquareType.S;
+		squares[2][0] = SquareType.S;
+		squares[0][1] = SquareType.S;
+		squares[1][1] = SquareType.S;
 
-    private Poly createTPiece() {
+		return new Poly(squares);
+	}
 
-        SquareType[][] squares = new SquareType[3][3];
-        fillWithEmpty(squares);
+	private Poly createTPiece() {
 
-        squares[1][0] = SquareType.T;
-        squares[0][1] = SquareType.T;
-        squares[1][1] = SquareType.T;
-        squares[2][1] = SquareType.T;
+		SquareType[][] squares = new SquareType[3][3];
+		fillWithEmpty(squares);
 
-        return new Poly(squares);
-    }
+		squares[1][0] = SquareType.T;
+		squares[0][1] = SquareType.T;
+		squares[1][1] = SquareType.T;
+		squares[2][1] = SquareType.T;
 
-    private Poly createZPiece() {
+		return new Poly(squares);
+	}
 
-        SquareType[][] squares = new SquareType[3][3];
-        fillWithEmpty(squares);
+	private Poly createZPiece() {
 
-        squares[0][0] = SquareType.Z;
-        squares[1][0] = SquareType.Z;
-        squares[1][1] = SquareType.Z;
-        squares[2][1] = SquareType.Z;
+		SquareType[][] squares = new SquareType[3][3];
+		fillWithEmpty(squares);
 
-        return new Poly(squares);
-    }
+		squares[0][0] = SquareType.Z;
+		squares[1][0] = SquareType.Z;
+		squares[1][1] = SquareType.Z;
+		squares[2][1] = SquareType.Z;
 
-    private Poly createJPiece() {
+		return new Poly(squares);
+	}
 
-        SquareType[][] squares = new SquareType[3][3];
-        fillWithEmpty(squares);
+	private Poly createJPiece() {
 
-        squares[0][0] = SquareType.J;
-        squares[0][1] = SquareType.J;
-        squares[1][1] = SquareType.J;
-        squares[2][1] = SquareType.J;
+		SquareType[][] squares = new SquareType[3][3];
+		fillWithEmpty(squares);
 
-        return new Poly(squares);
-    }
+		squares[0][0] = SquareType.J;
+		squares[0][1] = SquareType.J;
+		squares[1][1] = SquareType.J;
+		squares[2][1] = SquareType.J;
 
-    private Poly createLPiece() {
+		return new Poly(squares);
+	}
 
-        SquareType[][] squares = new SquareType[3][3];
-        fillWithEmpty(squares);
+	private Poly createLPiece() {
 
-        squares[2][0] = SquareType.L;
-        squares[0][1] = SquareType.L;
-        squares[1][1] = SquareType.L;
-        squares[2][1] = SquareType.L;
+		SquareType[][] squares = new SquareType[3][3];
+		fillWithEmpty(squares);
 
-        return new Poly(squares);
-    }
+		squares[2][0] = SquareType.L;
+		squares[0][1] = SquareType.L;
+		squares[1][1] = SquareType.L;
+		squares[2][1] = SquareType.L;
 
-    private Poly createOPiece() {
+		return new Poly(squares);
+	}
 
-        SquareType[][] squares = new SquareType[2][2];
-        fillWithEmpty(squares);
+	private Poly createOPiece() {
 
-        squares[0][0] = SquareType.O;
-        squares[0][1] = SquareType.O;
-        squares[1][0] = SquareType.O;
-        squares[1][1] = SquareType.O;
+		SquareType[][] squares = new SquareType[2][2];
+		fillWithEmpty(squares);
 
-        return new Poly(squares);
-    }
+		squares[0][0] = SquareType.O;
+		squares[0][1] = SquareType.O;
+		squares[1][0] = SquareType.O;
+		squares[1][1] = SquareType.O;
 
-    private void fillWithEmpty(SquareType[][] blocks) {
-        for (int i = 0; i < blocks.length; i++) {
-            for (int j = 0; j < blocks.length; j++) {
-                blocks[j][i] = SquareType.EMPTY;
-            }
-        }
-    }
+		return new Poly(squares);
+	}
+
+	private void fillWithEmpty(SquareType[][] blocks) {
+		for (int i = 0; i < blocks.length; i++) {
+			for (int j = 0; j < blocks.length; j++) {
+				blocks[j][i] = SquareType.EMPTY;
+			}
+		}
+	}
 
 }

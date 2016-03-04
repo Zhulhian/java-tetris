@@ -1,5 +1,9 @@
 package tetris;
 
+/**
+ * A score. It implements Comparable so that it can
+ * be compared to other scores with compareTo().
+ */
 class Score implements Comparable<Score> {
     public final int score;
     public final String name;

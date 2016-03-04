@@ -1,7 +1,12 @@
 package tetris;
 
+/**
+ * A polymino piece, made up of SquareTypes.
+ * */
 public class Poly {
+
     private final SquareType[][] polymino;
+
     public Poly(SquareType[][] polymino) {
         this.polymino = polymino;
     }
@@ -10,7 +15,7 @@ public class Poly {
         return polymino[x][y];
     }
 
-    public Poly rotateRight() {
+    public Poly rotateLeft() {
         int size = polymino.length;
         Poly rotatedPoly = new Poly(new SquareType[size][size]);
 
@@ -23,6 +28,9 @@ public class Poly {
         return rotatedPoly;
     }
 
+    // It's not really necessary to have both a getWidth and getHeight
+    // function, since they are the same, but it might be useful for
+    // future expansions.
     public int getWidth() {
         return polymino[0].length;
     }
