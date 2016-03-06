@@ -144,7 +144,7 @@ class Board
 				rotateCount = 0;
 
 				// See if the gods of chaos wants it to be a phase type.
-				if (rng.nextInt(PHASE_CHANCE) > 1) {
+				if (rng.nextInt(PHASE_CHANCE) < 1) {
 					collision = new Phase();
 				// If not, we create a normal one.
 				} else if (collision.getClass() != DefaultCollisionHandler.class) {
